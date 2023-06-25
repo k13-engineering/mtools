@@ -20,7 +20,7 @@
 #define HAVE_BASENAME 1
 
 /* Define to 1 if you have the `fchdir' function. */
-#define HAVE_FCHDIR 1
+#undef HAVE_FCHDIR
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
