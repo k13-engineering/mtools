@@ -912,7 +912,7 @@ int getfreeMinClusters(Stream_t *Dir, size_t size)
 		if(This->freeSpace >= size)
 			return 1;
 		else {
-			fprintf(stderr, "Disk full\n");
+			fprintf(stderr, "Disk full, free space = %i, size = %i\n", (int) This->freeSpace, (int) size);
 			got_signal = 1;
 			return 0;
 		}
