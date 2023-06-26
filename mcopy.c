@@ -298,7 +298,7 @@ static int writeit(struct dos_name_t *dosname,
 	mt_size_t filesize, newsize;
 	Arg_t *arg = (Arg_t *) arg0;
 
-
+	fprintf(stderr, "arg = %p, class = %p, get_data = %p\n", arg, arg->mp.File->Class, arg->mp.File->Class->get_data);
 
 	if (arg->mp.File->Class->get_data(arg->mp.File,
 									  & date, &filesize, &type, 0) < 0 ){
@@ -306,10 +306,16 @@ static int writeit(struct dos_name_t *dosname,
 		return -1;
 	}
 
+	fprintf(stderr, "checkpoint 1\n");
+
+
 	if(fileTooBig(filesize)) {
 		fprintf(stderr, "File \"%s\" too big\n", longname);
 		return 1;
 	}
+
+	fprintf(stderr, "checkpoint 2\n");
+
 
 	if (type){
 		if (arg->verbose)
@@ -335,6 +341,8 @@ static int writeit(struct dos_name_t *dosname,
 
 	mk_entry(dosname, arg->attr, 1, 0, now, &entry->dir);
 
+	fprintf(stderr, "checkpoint 3\n");
+
 	Target = OpenFileByDirentry(entry);
 	if(!Target){
 		fprintf(stderr,"Could not open Target\n");
@@ -344,19 +352,36 @@ static int writeit(struct dos_name_t *dosname,
 		Target = open_filter(Target,arg->convertCharset);
 
 
+	fprintf(stderr, "checkpoint 4\n");
 
 	ret = copyfile(arg->mp.File, Target);
+
+	fprintf(stderr, "checkpoint 5\n");
+
 	GET_DATA(Target, 0, &newsize, 0, &fat);
+
+	fprintf(stderr, "checkpoint 6\n");
+
 	FREE(&Target);
+
+	fprintf(stderr, "checkpoint 7\n");
+
 	if (arg->needfilter & arg->textmode)
 	    newsize++; /* ugly hack: we gathered the size before the Ctrl-Z
 			* was written.  Increment it manually */
+
+	fprintf(stderr, "checkpoint 8\n");
+	
 	if(ret < 0 ){
 		fat_free(arg->mp.targetDir, fat);
+	fprintf(stderr, "checkpoint 9\n");
+
 		return -1;
 	} else {
 		mk_entry(dosname, arg->attr, fat, truncBytes32(newsize),
 				 now, &entry->dir);
+	fprintf(stderr, "checkpoint 10\n");
+
 		return 0;
 	}
 }
